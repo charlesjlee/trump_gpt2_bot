@@ -1,0 +1,21 @@
+name: tweet
+on:
+  schedule:
+    - cron:  '*/5 * * * *'
+jobs:
+  tweet:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Git checkout
+      uses: actions/checkout@v2
+
+    - name: Set up Python 3.9
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+
+    - name: Install dependencies
+      run: pip install tweepy
+
+    - name: Send tweet
+      run: python ./tweet.py
