@@ -42,8 +42,7 @@ if not new_tweet_ids:
     sys.exit("no new tweets. Aborting!")
 
 tweet_id = new_tweet_ids.pop()
-print("tweet")
-pprint(tweet)
+print(f"{tweet_id=}")
 
 # run through GPT2
 
