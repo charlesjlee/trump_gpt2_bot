@@ -37,10 +37,10 @@ pprint(follower_tweets)
 
 # find new, un-processed tweets
 new_tweet_ids = {x[0] for x in follower_tweets} - processed
+new_tweet_ids = processed # TODO: delete me
 print("new_tweets")
 pprint(new_tweet_ids)
 
-# TODO: enable me
 if not new_tweet_ids:
     sys.exit("no new tweets. Aborting!")
 
