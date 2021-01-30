@@ -2,6 +2,7 @@ import tweepy
 import os
 import re
 from pprint import pprint
+from aitextgen import aitextgen
 
 consumer_key = os.environ["consumer_key"]
 consumer_secret = os.environ["consumer_secret"]
@@ -45,6 +46,9 @@ tweet_id = new_tweet_ids.pop()
 print(f"{tweet_id=}")
 
 # run through GPT2
+# TODO: cache me or LFS
+ai = aitextgen()
+ai.generate(n=3, prompt="I believe in unicorns because", max_length=100)
 
 # tweet it (as a reply?)
 # result = api.update_status("Look, I'm tweeting from #Python in my #earthanalytics class! @EarthLabCU")
