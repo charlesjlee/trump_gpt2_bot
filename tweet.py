@@ -52,6 +52,6 @@ result = True
 
 if result:
     with open('processed.txt', 'a') as f:
-        f.write(f"{tweet}\n")
+        f.write(f"{tweet_id}\n")
 else:
     print("failed to tweet!")
