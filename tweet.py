@@ -1,6 +1,7 @@
 import tweepy
 import os
 import re
+import sys
 from pprint import pprint
 from aitextgen import aitextgen
 
@@ -39,6 +40,7 @@ new_tweet_ids = {x[0] for x in follower_tweets} - processed
 print("new_tweets")
 pprint(new_tweet_ids)
 
+# TODO: enable me
 if not new_tweet_ids:
     sys.exit("no new tweets. Aborting!")
 
