@@ -25,3 +25,11 @@ jobs:
         consumer_secret: ${{ secrets.consumer_secret }}
         access_token: ${{ secrets.access_token }}
         access_token_secret: ${{ secrets.access_token_secret }}
+
+    - name: Commit processed tweet Id
+      run: |
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+        git add .
+        git commit -m "Append processed tweet Id"
+        git push
