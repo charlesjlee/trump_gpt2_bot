@@ -102,9 +102,24 @@ else:
     df.sort_values(by='score', ascending=False, inplace=True)
     print(f"\nTop 10 answers by score\n{42*'-'}\n{df.head(10)}\n")
     
+    ##########################################################################
+    # TODO: delete me
+    # logging to debug GH runner failure
+    part_one = df[0.4 < df.score]
+    print(f"{part_one=}")
+    
+    part_two = df[df.score < 0.65]
+    print(f"{part_two=}")
+    
+    filtered_df = df[(0.4 < df.score) & (df.score < 0.65)]
+    print(f"{filtered_df=}")
+    print(f"{filtered_df.empty=}")
+    
+    ##########################################################################
+    
     # choose randomly from score range of [0.4, 0.65]
     # shorter lengths score too high
-    filtered_df = df[(0.4<df.score) & (df.score <0.65)]
+    filtered_df = df[(0.4 < df.score) & (df.score < 0.65)]
     if filtered_df.empty:
         sys.exit(f"Failed to generate viable candidates for the tweet: {new_tweet[1]}")
 
