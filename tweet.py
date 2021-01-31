@@ -104,7 +104,11 @@ else:
     
     # choose randomly from score range of [0.4, 0.65]
     # shorter lengths score too high
-    response = df[(0.4<df.score) & (df.score <0.65)].sample()
+    filtered_df = df[(0.4<df.score) & (df.score <0.65)]
+    if filtered_df.empty:
+        sys.exit(f"Failed to generate viable candidates for the tweet: {new_tweet[1]}")
+
+    response = filtered_df.sample()
     print(f"Randomly selected response: {response}\n")
     
     # tweet as a reply
