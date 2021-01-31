@@ -109,14 +109,14 @@ print(f"Randomly selected response: {response}\n")
 
 # tweet as a reply
 try:
-    status = api.update_status(status=response.text,
+    status = api.update_status(status=response.text.item(),
                                 in_reply_to_status_id=new_tweet[0],
                                 auto_populate_reply_metadata=True)
 except Exception as e:
     sys.exit(f"Failed to tweet as reply because {type(e).__name__} occurred. Arguments:\n{e.args}")
 
 # log tweet
-new_df = pd.DataFrame([[*new_tweet, status.id_str, response.text]], columns=columns)
+new_df = pd.DataFrame([[*new_tweet, status.id_str, response.text.item()]], columns=columns)
 new_df.to_csv(FILE_PATH, mode='a', header=not os.path.exists(FILE_PATH), index=False, encoding='utf-8')
 
 print(f"appended new row to {FILE_PATH}:\n{new_df}")
