@@ -84,7 +84,7 @@ def jaccard_similarity(a, b):
     return len(x&y) / len(x|y)
 
 def score(row):
-    if 0<=row.len<10 or row.trump or row.symbols > 2: return 0
+    if row.len < 10 or row.len > 250 row.trump or row.symbols > 2: return 0
     return row.jaccard + row.self_similarity
 
 # compute score for each answer
