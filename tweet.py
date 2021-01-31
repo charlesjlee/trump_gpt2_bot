@@ -2,8 +2,14 @@ import tweepy
 import os
 import re
 import sys
+import os
+import time
 from pprint import pprint
 from aitextgen import aitextgen
+import pandas as pd
+pd.set_option("display.max_columns", None)
+pd.set_option("display.max_rows", None)
+pd.set_option('display.max_colwidth', None)
 
 consumer_key = os.environ["consumer_key"]
 consumer_secret = os.environ["consumer_secret"]
@@ -14,15 +20,24 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
 
-# get set of processed tweet ID's
-with open('processed.txt') as f:
-    processed = set(map(str.strip, f.readlines()))
-print(f"processed: {processed}\n")
+FILE_PATH = 'processed.csv'
+PROMPT_TWEET_ID = 'prompt_tweet_id'
+PROMPT_TWEET = 'prompt_tweet'
+RESPONSE_TWEET_ID = 'response_tweet_id'
+RESPONSE_TWEET = 'response_tweet'
+columns = [PROMPT_TWEET_ID, PROMPT_TWEET, RESPONSE_TWEET_ID, RESPONSE_TWEET]
+
+# load processed tweets
+try:
+    df = pd.read_csv(FILE_PATH, encoding='utf-8')
+except FileNotFoundError:
+    df = pd.DataFrame(columns=columns)
 
 # TODO: change `count` to 1
 # get latest tweet by followers
 follower_tweets = [
-    (tweet.id_str, re.sub(r'http\S+', '', tweet.full_text).strip())
+    # (tweet.id_str, re.sub(r'http\S+', '', tweet.full_text).strip()) # TODO: reapply regex
+    (tweet.id_str, tweet.full_text)
     for friend_id in api.friends_ids()
     for tweet in api.user_timeline(
         tweet_mode='extended',
@@ -35,29 +50,35 @@ follower_tweets = [
 print("follower_tweets")
 pprint(follower_tweets)
 
-# find new, un-processed tweets
-new_tweet_ids = {x[0] for x in follower_tweets} - processed
-new_tweet_ids = processed # TODO: delete me
-print("new_tweets")
-pprint(new_tweet_ids)
+# get first new, unprocessed tweet
+new_tweet = next(filter(lambda x: int(x[0]) not in set(df.prompt_tweet_id), follower_tweets), None)
+print(f"{new_tweet=}")
 
-if not new_tweet_ids:
-    sys.exit("no new tweets. Aborting!")
+if not new_tweet:
+    sys.exit("no new, unprocessed tweets. Aborting!")
 
-tweet_id = new_tweet_ids.pop()
-print(f"{tweet_id=}")
+# # run through GPT2
+# start_time = time.time()
+# ai = aitextgen()
+# print(f"loaded model in {round(time.time()-start_time, 2)} seconds")
 
-# run through GPT2
-# TODO: cache me or LFS
-ai = aitextgen()
-ai.generate(n=3, prompt="I believe in unicorns because", max_length=100)
+# start_time = time.time()
+# ai.generate(n=3, prompt="I believe in unicorns because", max_length=100)
+# answers = []
+# print(f"generated {len(answers)} results in {round(time.time()-start_time, 2)} seconds")
+response_tweet = 'xxxxxxxxxxx'
 
-# tweet it (as a reply?)
-# result = api.update_status("Look, I'm tweeting from #Python in my #earthanalytics class! @EarthLabCU")
-result = True
+# tweet as a reply
+try:
+    status = api.update_status(status=response_tweet,
+                               in_reply_to_status_id=new_tweet[0],
+                               auto_populate_reply_metadata=True)
+except Exception as e:
+    sys.exit(f"Failed to tweet as reply because {type(e).__name__} occurred. Arguments:\n{e.args}")
 
-if result:
-    with open('processed.txt', 'a') as f:
-        f.write(f"{tweet_id}\n")
-else:
-    print("failed to tweet!")
+# log tweet
+new_df = pd.DataFrame([[*new_tweet, status.id_str, response_tweet]], columns=columns)
+new_df.to_csv(FILE_PATH, mode='a', header=not os.path.exists(FILE_PATH), index=False, encoding='utf-8')
+
+print(f"appended new row to {FILE_PATH}:\n{new_df}")
+print(42*'-' + '\nScript succeeded!')

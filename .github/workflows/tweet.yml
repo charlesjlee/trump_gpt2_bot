@@ -26,10 +26,10 @@ jobs:
         access_token: ${{ secrets.access_token }}
         access_token_secret: ${{ secrets.access_token_secret }}
 
-    - name: Commit processed tweet Id
+    - name: Commit processed tweet
       run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
-        git add processed.txt
-        git commit -m "Append processed tweet Id"
+        git add processed.csv
+        git commit -m "append processed tweet"
         git push
