@@ -94,7 +94,7 @@ else:
         'text': answers,
         'len': list(map(len,answers)),
         'trump': [s.lower().count("trump") for s in answers],
-        'symbols': [sum(ord(c)>=128 for c in s) for s in answers],
+        'symbols': [sum(ord(c)>=128 or c=='@' for c in s) for s in answers],
         'jaccard': [1-sum(jaccard_similarity(a,b) for b in [t1,t2,t3])/3 for a in answers],
         'self_similarity': [len(set(s))/len(s) if len(s) else 1 for s in answers],
     })
