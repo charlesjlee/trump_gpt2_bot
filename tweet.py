@@ -120,10 +120,13 @@ else:
     # choose randomly from score range of [0.4, 0.65]
     # shorter lengths score too high
     filtered_df = df[(0.4 < df.score) & (df.score < 0.65)]
+    print(f"{filtered_df=}") # TODO: delete me
+    print(f"{filtered_df.empty=}") # TODO: delete me
     if filtered_df.empty:
         sys.exit(f"Failed to generate viable candidates for the tweet: {new_tweet[1]}")
 
     response = filtered_df.sample()
+    print(f"{response=}") # TODO: delete me
     print(f"Randomly selected response: {response}\n")
     
     # tweet as a reply
