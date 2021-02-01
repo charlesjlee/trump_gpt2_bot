@@ -106,22 +106,22 @@ else:
     # shorter lengths score too high
     filtered_df = df[(0.4 < df.score) & (df.score < 0.65)]
     if filtered_df.empty:
-        sys.exit("Failed to generate viable candidates")
+        print(42*'-' + '\nFailed to generate viable candidates. Aborting!')
+    else:
+        response = filtered_df.sample()
+        print(f"Randomly selected response: {response}\n")
 
-    response = filtered_df.sample()
-    print(f"Randomly selected response: {response}\n")
-    
-    # tweet as a reply
-    try:
-        status = api.update_status(status=response.text.item(),
-                                   in_reply_to_status_id=new_tweet[0],
-                                   auto_populate_reply_metadata=True)
-    except Exception as e:
-        sys.exit(f"Failed to tweet as reply because {type(e).__name__} occurred. Arguments:\n{e.args}")
-    
-    # log tweet
-    log_df = pd.DataFrame([[*new_tweet, status.id_str, response.text.item()]], columns=columns)
-    log_df.to_csv(FILE_PATH, mode='a', header=not os.path.exists(FILE_PATH), index=False, encoding='utf-8')
-    
-    print(f"appended new row to {FILE_PATH}:\n{log_df}")
-    print(42*'-' + '\nScript succeeded!')
+        # tweet as a reply
+        try:
+            status = api.update_status(status=response.text.item(),
+                                       in_reply_to_status_id=new_tweet[0],
+                                       auto_populate_reply_metadata=True)
+        except Exception as e:
+            sys.exit(f"Failed to tweet as reply because {type(e).__name__} occurred. Arguments:\n{e.args}")
+
+        # log tweet
+        log_df = pd.DataFrame([[*new_tweet, status.id_str, response.text.item()]], columns=columns)
+        log_df.to_csv(FILE_PATH, mode='a', header=not os.path.exists(FILE_PATH), index=False, encoding='utf-8')
+
+        print(f"appended new row to {FILE_PATH}:\n{log_df}")
+        print(42*'-' + '\nScript succeeded!')
