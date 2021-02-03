@@ -78,7 +78,7 @@ else:
     
     # ask GPT-2 small model to generate answers
     start_time = time.time()
-    answers = list(map(process, ai.generate(n=30, max_length=220, prompt=prompt_updated, return_as_list=True)))
+    answers = list(map(process, ai.generate(n=60, max_length=220, prompt=prompt_updated, return_as_list=True)))
     print(f"generated {len(answers)} results in {round(time.time()-start_time, 2)} seconds")
     
     def jaccard_similarity(a, b):

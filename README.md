@@ -39,9 +39,9 @@ The simple and janky candidate scoring system is very hard-coded, arbitrary, and
 	- short sentences generate higher scores because they repeat fewer words, and we exclude them because they are less interesting. This is a sign that the scoring needs tweaking
 
 #### Extend run-time
-While it would be possible to properly fine-tune the GPT-2 model on a dataset of Trump's writing, or run one of the larger GPT-2 models, or call out to and execute on Google Colab instead of the GitHub runner, the [magic sauce](https://github.com/charlesjlee/trump_gpt2_bot/blob/main/tweet.py#L62-L66) for generating Tweets in the first-person voice of Trump is pretty effective. I think an easier improvement would be to scale up candidate generation and improve candidate scoring.
+While it would be possible to properly fine-tune the GPT-2 model on a dataset of Trump's writing, or run one of the larger GPT-2 models, or call out to and execute on Google Colab instead of the GitHub runner, or use a self-hosted runner, the [magic sauce](https://github.com/charlesjlee/trump_gpt2_bot/blob/main/tweet.py#L62-L66) for generating Tweets in the first-person voice of Trump is pretty effective. I think an easier improvement would be to scale up candidate generation and improve candidate scoring.
 
-The Actions job currently runs for <3 minutes. This includes importing the "small" model in 13 seconds and generating 30 results in 27 seconds. The majority of the time is actually taken up by installing dependencies at 1.5 minutes. However,
+The Actions job currently runs for <3 minutes. This includes importing the "small" model in 13 seconds and generating 60 results in 54 seconds. The majority of the time is actually taken up by installing dependencies at 1.5 minutes. However,
 >[Each job in a workflow can run for up to 6 hours of execution time](https://docs.github.com/en/actions/reference/usage-limits-billing-and-administration#usage-limits)
 
 At the current rate of 1 candidate per second, we could instead generate 21600 candidates per 6 hours. However, without a better scoring metric, we would just be selecting blindly from a large pool and may not see better results. Also, duplicate results could be a problem.
