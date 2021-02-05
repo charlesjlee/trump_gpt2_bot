@@ -33,17 +33,20 @@ except FileNotFoundError:
     df = pd.DataFrame(columns=columns)
 
 # get latest tweet by followers
-follower_tweets = [
-    (tweet.id_str, tweet.full_text)
-    for friend_id in api.friends_ids()
-    for tweet in api.user_timeline(
-        tweet_mode='extended',
-        user_id=friend_id,
-        count=3,
-        include_rts=False,
-        exclude_replies=True,
-    )
-]
+try:
+    follower_tweets = [
+        (tweet.id_str, tweet.full_text)
+        for friend_id in api.friends_ids()
+        for tweet in api.user_timeline(
+            tweet_mode='extended',
+            user_id=friend_id,
+            count=3,
+            include_rts=False,
+            exclude_replies=True,
+        )
+    ]
+except Exception as e:
+    sys.exit(f"Failed to get follower's tweets because {type(e).__name__} occurred. Arguments:\n{e.args}")
 print(f"follower_tweets\n{follower_tweets}\n\n")
 
 # get first new, unprocessed tweet
