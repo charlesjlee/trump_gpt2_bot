@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import time
+from string import punctuation, ascii_letters
 from aitextgen import aitextgen
 
 import pandas as pd
@@ -89,15 +90,19 @@ else:
         return len(x&y) / len(x|y)
     
     def score(row):
-        if row.len < 10 or row.len > 250 or row.trump or row.symbols > 2: return 0
+        if (row.len < 10 or row.len > 250 or
+            row.trump or row.symbols > 2 or
+            row.text[0] in punctuation or row.digits > 4):
+            return 0
         return row.jaccard + row.self_similarity
     
     # compute score for each answer
     df = pd.DataFrame({
         'text': answers,
         'len': list(map(len,answers)),
+        'digits': [sum(map(str.isdigit, s)) for s in answers],
         'trump': [s.lower().count("trump") for s in answers],
-        'symbols': [sum(ord(c)>=128 or c=='@' for c in s) for s in answers],
+        'symbols': [sum(c not in ascii_letters for c in s) for s in answers],
         'jaccard': [1-sum(jaccard_similarity(a,b) for b in [t1,t2,t3])/3 for a in answers],
         'self_similarity': [len(set(s))/len(s) if len(s) else 1 for s in answers],
     })
