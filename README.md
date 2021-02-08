@@ -4,7 +4,7 @@ This repo uses the GPT-2 deep learning model (via [aitextgen](https://docs.aitex
 Specifically, every 10 minutes, a GitHub Actions workflow is triggered. This workflow executes `tweet.py`, which:
 1. grabs the 3 newest tweet from every follower
 2. picks an unprocessed tweet to use
-3. feeds a prompt into `aitextgen` and generates 30 candidate responses
+3. feeds a prompt into `aitextgen` and generates 60 candidate responses
 4. scores, ranks, then randomly chooses a candidate to tweet
 5. logs tweet to the dataframe `processed.csv`
 
@@ -41,7 +41,7 @@ The simple and janky candidate scoring system is very hard-coded, arbitrary, and
 #### Extend run-time
 While it would be possible to properly fine-tune the GPT-2 model on a dataset of Trump's writing, or run one of the larger GPT-2 models, or call out to and execute on Google Colab instead of the GitHub runner, or use a self-hosted runner, the [magic sauce](https://github.com/charlesjlee/trump_gpt2_bot/blob/main/tweet.py#L62-L66) for generating Tweets in the first-person voice of Trump is pretty effective. I think an easier improvement would be to scale up candidate generation and improve candidate scoring.
 
-The Actions job currently runs for <3 minutes. This includes importing the "small" model in 13 seconds and generating 60 results in 74 seconds. The majority of the time is actually taken up by installing dependencies at 1.5 minutes. However,
+The Actions job currently runs for <3 minutes. This includes importing the "small" model in 13 seconds and generating 60 results in ~60 seconds. The majority of the time is actually taken up by installing dependencies at 1.5 minutes. However,
 >[Each job in a workflow can run for up to 6 hours of execution time](https://docs.github.com/en/actions/reference/usage-limits-billing-and-administration#usage-limits)
 
 At the current rate of 1 candidate per second, we could instead generate 21600 candidates per 6 hours. However, without a better scoring metric, we would just be selecting blindly from a large pool and may not see better results. Also, duplicate results could be a problem.

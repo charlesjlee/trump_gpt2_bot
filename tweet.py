@@ -102,7 +102,7 @@ else:
         'len': list(map(len,answers)),
         'digits': [sum(map(str.isdigit, s)) for s in answers],
         'trump': [s.lower().count("trump") for s in answers],
-        'symbols': [sum(c not in ascii_letters for c in s) for s in answers],
+        'symbols': [sum(c not in ascii_letters and not c.isspace() for c in s) for s in answers],
         'jaccard': [1-sum(jaccard_similarity(a,b) for b in [t1,t2,t3])/3 for a in answers],
         'self_similarity': [len(set(s))/len(s) if len(s) else 1 for s in answers],
     })
