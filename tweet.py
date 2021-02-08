@@ -41,7 +41,7 @@ try:
         for tweet in api.user_timeline(
             tweet_mode='extended',
             user_id=friend_id,
-            count=3,
+            count=10,
             include_rts=False,
             exclude_replies=True,
         )
