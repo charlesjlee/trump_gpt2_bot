@@ -88,11 +88,12 @@ else:
     def jaccard_similarity(a, b):
         x, y = set(a), set(b)
         return len(x&y) / len(x|y)
-    
+
     def score(row):
         if (row.len < 10 or row.len > 250 or
             row.trump or row.symbols > 2 or
-            row.text[0] in punctuation or row.digits > 4):
+            row.text[0] in punctuation or row.digits > 4 or
+            row.text.lower() in ('hitler')):
             return 0
         return row.jaccard + row.self_similarity
     

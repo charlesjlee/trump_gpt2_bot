@@ -2,7 +2,7 @@
 This repo uses the GPT-2 deep learning model (via [aitextgen](https://docs.aitextgen.io/)) to post on Twitter in the style of Donald Trump on this account: https://twitter.com/donaldtrumpbot5/with_replies
 
 Specifically, every 10 minutes, a GitHub Actions workflow is triggered. This workflow executes `tweet.py`, which:
-1. grabs the 3 newest tweet from every follower
+1. grabs the 10 newest tweet from every follower
 2. picks an unprocessed tweet to use
 3. feeds a prompt into `aitextgen` and generates 60 candidate responses
 4. scores, ranks, then randomly chooses a candidate to tweet
