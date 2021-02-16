@@ -4,6 +4,7 @@ import re
 import sys
 import time
 from string import punctuation
+from collections import Counter
 from aitextgen import aitextgen
 
 import pandas as pd
@@ -21,17 +22,13 @@ auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
 
 FILE_PATH = 'processed.csv'
-PROMPT_TWEET_ID = 'prompt_tweet_id'
-PROMPT_TWEET = 'prompt_tweet'
-RESPONSE_TWEET_ID = 'response_tweet_id'
-RESPONSE_TWEET = 'response_tweet'
-columns = [PROMPT_TWEET_ID, PROMPT_TWEET, RESPONSE_TWEET_ID, RESPONSE_TWEET]
+COLUMNS = ['prompt_tweet_id', 'prompt_tweet', 'response_tweet_id', 'response_tweet']
 
 # load processed tweets
 try:
     df = pd.read_csv(FILE_PATH, encoding='utf-8')
 except FileNotFoundError:
-    df = pd.DataFrame(columns=columns)
+    df = pd.DataFrame(columns=COLUMNS)
 
 # get latest tweet by followers
 try:
@@ -56,9 +53,8 @@ print(f"{new_tweet=}")
 
 if not new_tweet:
     print(42*'-' + '\nNo new, unprocessed tweets. Aborting!')
-
 else:
-    # run through GPT2
+    # run through GPT-2 small model
     start_time = time.time()
     ai = aitextgen()
     print(f"loaded model in {round(time.time()-start_time, 2)} seconds")
@@ -80,7 +76,7 @@ else:
     
         return s
     
-    # ask GPT-2 small model to generate answers
+    # generate answers
     start_time = time.time()
     answers = list(map(process, ai.generate(n=60, max_length=220, prompt=prompt_updated, return_as_list=True)))
     print(f"generated {len(answers)} results in {round(time.time()-start_time, 2)} seconds")
@@ -93,7 +89,7 @@ else:
         if (row.len < 10 or row.len > 250 or
             row.trump or row.symbols > 2 or
             row.text[0] in punctuation or row.digits > 4 or
-            row.text.lower() in ('hitler')):
+            row.banned_words or row.repeated_sentences):
             return 0
         return row.jaccard + row.self_similarity
     
@@ -104,6 +100,8 @@ else:
         'digits': [sum(map(str.isdigit, s)) for s in answers],
         'trump': [s.lower().count("trump") for s in answers],
         'symbols': [sum(ord(c)>=128 or c=='@' for c in s) for s in answers],
+        'banned_words': [sum(banned in s.lower() for banned in ['hitler']) for s in answers],
+        'repeated_sentences': [sum(counter := Counter(map(str.strip, re.split(r"[.!?]", s))).values()) - len(counter) for s in answers],
         'jaccard': [1-sum(jaccard_similarity(a,b) for b in [t1,t2,t3])/3 for a in answers],
         'self_similarity': [len(set(s))/len(s) if len(s) else 1 for s in answers],
     })
@@ -129,7 +127,7 @@ else:
             sys.exit(f"Failed to tweet as reply because {type(e).__name__} occurred. Arguments:\n{e.args}")
 
         # log tweet
-        log_df = pd.DataFrame([[*new_tweet, status.id_str, response.text.item()]], columns=columns)
+        log_df = pd.DataFrame([[*new_tweet, status.id_str, response.text.item()]], columns=COLUMNS)
         log_df.to_csv(FILE_PATH, mode='a', header=not os.path.exists(FILE_PATH), index=False, encoding='utf-8')
 
         print(f"appended new row to {FILE_PATH}:\n{log_df}")

@@ -52,6 +52,9 @@ This problem is sporadic, can be avoided by retrying, and is a bug in my code --
 'Over the last 10 days, I’ve taken action on:\n\n- COVID-19\n- The economy\n- Climate change\n- Racial equity\n- Immigration\n- Health care \n- LGBTQ+ rights\n\nAnd I’m just getting started.'
 ```
 
+#### Vary the magic sauce
+`prompt_updated` is primarily composed of three hard-coded Tweets by Trump and this causes responses to sometimes by very similar. See if I can vary the input Tweets.
+
 #### Avoid large downloads
 Each execution of the workflow downloads 1GB+ (776MB for PyTorch and 548MB for the GPT-2 "small" model). This is not really an issue on this public repo because execution is still very fast and isn't hitting any quotas, but it would be nice to take advantage of GitHub's support for [caching dependencies](https://docs.github.com/en/actions/guides/caching-dependencies-to-speed-up-workflows).
 
