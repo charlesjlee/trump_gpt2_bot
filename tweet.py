@@ -23,6 +23,7 @@ api = tweepy.API(auth)
 
 FILE_PATH = 'processed.csv'
 COLUMNS = ['prompt_tweet_id', 'prompt_tweet', 'response_tweet_id', 'response_tweet']
+BANNED_WORDS = ['hitler', 'kill']
 
 # load processed tweets
 try:
@@ -100,7 +101,7 @@ else:
         'digits': [sum(map(str.isdigit, s)) for s in answers],
         'trump': [s.lower().count("trump") for s in answers],
         'symbols': [sum(ord(c)>=128 or c=='@' for c in s) for s in answers],
-        'banned_words': [sum(banned in s.lower() for banned in ['hitler']) for s in answers],
+        'banned_words': [sum(banned in s.lower() for banned in BANNED_WORDS) for s in answers],
         'repeated_sentences': [sum(counter := Counter(map(str.strip, re.split(r"[.!?]", s))).values()) - len(counter) for s in answers],
         'jaccard': [1-sum(jaccard_similarity(a,b) for b in [t1,t2,t3])/3 for a in answers],
         'self_similarity': [len(set(s))/len(s) if len(s) else 1 for s in answers],
