@@ -35,7 +35,7 @@ except FileNotFoundError:
 try:
     follower_tweets = [
         (tweet.id_str, tweet.full_text)
-        for friend_id in api.friends_ids()
+        for friend_id in api.get_friend_ids()
         for tweet in api.user_timeline(
             tweet_mode='extended',
             user_id=friend_id,
