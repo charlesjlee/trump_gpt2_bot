@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import time
+from requests.exceptions import ChunkedEncodingError
 from string import punctuation
 from collections import Counter
 from aitextgen import aitextgen
@@ -57,7 +58,15 @@ if not new_tweet:
 else:
     # run through GPT-2 small model
     start_time = time.time()
-    ai = aitextgen()
+
+    def get_aitextgen(tries=5):
+        for n in range(tries):
+            try:
+                return aitextgen()
+            except ChunkedEncodingError as e:
+                if n == tries - 1:
+                    raise e
+
     print(f"loaded model in {round(time.time()-start_time, 2)} seconds")
     
     prompt = re.sub(r'http\S+', '', new_tweet[1]).strip() # no image or video links
