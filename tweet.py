@@ -67,6 +67,7 @@ else:
                 if n == tries - 1:
                     raise e
 
+    ai = get_aitextgen()
     print(f"loaded model in {round(time.time()-start_time, 2)} seconds")
     
     prompt = re.sub(r'http\S+', '', new_tweet[1]).strip() # no image or video links
