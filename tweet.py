@@ -67,8 +67,11 @@ else:
                 if n == tries - 1:
                     raise e
 
-    ai = get_aitextgen()
-    print(f"loaded model in {round(time.time()-start_time, 2)} seconds")
+    try:
+        ai = get_aitextgen()
+        print(f"loaded model in {round(time.time()-start_time, 2)} seconds")
+    except Exception as e:
+        sys.exit(f"Failed to load aitextgen package because {type(e).__name__} occurred. Arguments:\n{e.args}")
     
     prompt = re.sub(r'http\S+', '', new_tweet[1]).strip() # no image or video links
     t1 = "Immigration reform is fine but don't rush to give away our country! Sounds like that's what's happening."
