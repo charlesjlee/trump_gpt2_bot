@@ -21,8 +21,6 @@ Things you'll need to run this bot:
   - access_token_secret
 
 ## Future work
-#### Improve code quality
-`script.py` is bearable now because it's short. Right?
 
 #### Score better
 The simple and janky candidate scoring system is very hard-coded, arbitrary, and doesn't work well at choosing the best Tweet. It currently:
@@ -35,7 +33,7 @@ The simple and janky candidate scoring system is very hard-coded, arbitrary, and
 	- many candidates just repeat the input prompt or repeat themselves and this is uninteresting
 	- Jaccard similarity is a simple but inaccurate metric for prompt-similarity
 3. uses the scores from step (2) to choose a random candidate
-	- this often misses the most creative or on-topic candidate
+	- often misses the most creative or on-topic candidate
 	- short sentences generate higher scores because they repeat fewer words, and we exclude them because they are less interesting. This is a sign that the scoring needs tweaking
 
 #### Extend run-time

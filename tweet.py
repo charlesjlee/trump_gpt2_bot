@@ -3,6 +3,7 @@ import os
 import re
 import sys
 import time
+from wordfilter import Wordfilter
 from string import punctuation
 from collections import Counter
 from aitextgen import aitextgen
@@ -20,7 +21,9 @@ access_token_secret = os.environ["access_token_secret"]
 
 FILE_PATH = 'processed.csv'
 COLUMNS = ['prompt_tweet_id', 'prompt_tweet', 'response_tweet_id', 'response_tweet']
-BANNED_WORDS = ['hitler', 'kill']
+
+wordfilter = Wordfilter()
+wordfilter.addWords(['hitler','kill'])
 
 PROMPT_FLAVOR_1 = "Immigration reform is fine but don't rush to give away our country! Sounds like that's what's happening."
 PROMPT_FLAVOR_2 = "The Republicans will get zero credit for passing immigration reform and I said zero!"
@@ -85,7 +88,7 @@ def score(row):
     if (row.len < 10 or row.len > 250 or
         row.trump or row.symbols > 2 or
         row.text[0] in punctuation or row.digits > 4 or
-        row.banned_words or row.repeated_sentences):
+        wordfilter.blacklisted(row.text) or row.repeated_sentences):
         return 0
     return row.jaccard + row.self_similarity
 
@@ -96,7 +99,6 @@ def score_candidate_tweets(candidate_tweets):
         'digits': [sum(map(str.isdigit, s)) for s in candidate_tweets],
         'trump': [s.lower().count("trump") for s in candidate_tweets],
         'symbols': [sum(ord(c)>=128 or c=='@' for c in s) for s in candidate_tweets],
-        'banned_words': [sum(banned in s.lower() for banned in BANNED_WORDS) for s in candidate_tweets],
         'repeated_sentences': [sum(counter := Counter(map(str.strip, re.split(r"[.!?]", s))).values()) - len(counter) for s in candidate_tweets],
         'jaccard': [1-sum(jaccard_similarity(a,b) for b in [PROMPT_FLAVOR_1,PROMPT_FLAVOR_2,PROMPT_FLAVOR_3])/3 for a in candidate_tweets],
         'self_similarity': [len(set(s))/len(s) if len(s) else 1 for s in candidate_tweets],
