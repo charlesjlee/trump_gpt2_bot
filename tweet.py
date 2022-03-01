@@ -145,14 +145,14 @@ if __name__ == "__main__":
     new_tweet = choose_tweet_from_scored_candidates(df_scored_tweets)
     print(f"{new_tweet=}")
 
-    if new_tweet.empty:
+    if new_tweet is None or new_tweet.empty:
         print(42*'-' + '\nFailed to generate viable candidates. Aborting!')
         sys.exit(0)
 
     status = tweet_reply(api, new_follower_tweet[0], new_tweet.text.item())
 
     # log tweet
-    log_df = pd.DataFrame([[*new_tweet, status.id_str, new_tweet.text.item()]], columns=COLUMNS)
+    log_df = pd.DataFrame([[*new_follower_tweet, status.id_str, new_tweet.text.item()]], columns=COLUMNS)
     log_df.to_csv(FILE_PATH, mode='a', header=not os.path.exists(FILE_PATH), index=False, encoding='utf-8')
 
     print(f"appended new row to {FILE_PATH}:\n{log_df}")
