@@ -112,11 +112,10 @@ def score_candidate_tweets(candidate_tweets):
 
 def choose_tweet_from_scored_candidates(df):
     filtered_df = df[(0.4 < df.score) & (df.score < 0.65)]
-    if filtered_df.empty:
-        print(42*'-' + '\nFailed to generate viable candidates. Aborting!')
-    else:
+    if not filtered_df.empty:
         response = filtered_df.sample()
         print(f"Randomly selected response: {response}\n")
+        return reponse
 
 @retry(wait=wait_exponential(multiplier=1, min=1, max=60), stop=stop_after_attempt(5))
 def tweet_reply(api, follower_tweet_id, tweet):
