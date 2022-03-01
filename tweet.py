@@ -1,5 +1,4 @@
 import tweepy
-import os
 import re
 import sys
 import time
@@ -115,7 +114,7 @@ def choose_tweet_from_scored_candidates(df):
     if not filtered_df.empty:
         response = filtered_df.sample()
         print(f"Randomly selected response: {response}\n")
-        return reponse
+        return response
 
 @retry(wait=wait_exponential(multiplier=1, min=1, max=60), stop=stop_after_attempt(5))
 def tweet_reply(api, follower_tweet_id, tweet):
@@ -145,7 +144,7 @@ if __name__ == "__main__":
     new_tweet = choose_tweet_from_scored_candidates(df_scored_tweets)
     print(f"{new_tweet=}")
 
-    if not new_tweet:
+    if new_tweet.empty:
         print(42*'-' + '\nFailed to generate viable candidates. Aborting!')
         sys.exit(0)
 
