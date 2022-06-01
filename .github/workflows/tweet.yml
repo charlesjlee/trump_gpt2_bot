@@ -16,7 +16,7 @@ jobs:
         python-version: '3.9'
 
     - name: Install dependencies
-      run: pip install tweepy pandas aitextgen tenacity wordfilter
+      run: pip install tweepy pandas aitextgen tenacity wordfilter protobuf==3.20.0
 
     - name: Send tweet
       run: python ./tweet.py
