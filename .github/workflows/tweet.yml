@@ -1,5 +1,6 @@
 name: tweet
 on:
+  workflow_dispatch:
   push:
   schedule:
     - cron: '*/10 * * * *'
