@@ -1,0 +1,6 @@
+tweepy==4.6.0
+pandas==1.4.1
+aitextgen==0.3.0
+tenacity==8.0.1
+wordfilter==0.2.7
+protobuf==3.20.0
